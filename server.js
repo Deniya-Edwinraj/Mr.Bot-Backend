@@ -103,7 +103,7 @@ import nodemailer from 'nodemailer';
 import cors from 'cors';
 import morgan from 'morgan';
 import userRoutes from './routes/userRoute.js';
-import axios from 'axios'; // Added axios to make API calls
+import axios from 'axios'; 
 
 dotenv.config();
 
@@ -147,37 +147,17 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model('Message', messageSchema);
 
-// POST Route to Store a New Message and Get Gemini API Response
 app.post('/chat', async (req, res) => {
     try {
         const { role, text } = req.body;
-
-        // Store the message in MongoDB
         const message = new Message({ role, text });
         await message.save();
-
-        // Make a request to Gemini API using axios
-        const geminiApiUrl = 'https://api.gemini.com/v1beta/cachedContents'; // Replace with the correct Gemini API endpoint
-        const geminiApiKey = process.env.GEMINI_API_KEY; // Store your API key in environment variables
-
-        // Example: Send text to the API and get the response
-        const response = await axios.post(geminiApiUrl, {
-            input: text,  // Send the input text to the API
-        }, {
-            headers: {
-                'Authorization': `Bearer ${geminiApiKey}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Handle the response from Gemini API
-        const geminiResponse = response.data; // Assuming the API returns a `data` field
-
-        console.log('Message stored in MongoDB and Gemini API responded');
-        res.status(201).json({ success: true, message, geminiResponse }); // Send the response back to the client
+        
+        console.log('Message stored in MongoDB');
+        res.status(201).json({ success: true, message });
     } catch (err) {
-        console.error('Error saving message or fetching Gemini API response:', err);
-        res.status(500).json({ success: false, error: 'Failed to save message or fetch Gemini response' });
+        console.error("Error saving message:", err);
+        res.status(500).json({ success: false, error: 'Failed to save message' });
     }
 });
 
