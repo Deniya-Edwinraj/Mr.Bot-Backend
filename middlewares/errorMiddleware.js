@@ -20,11 +20,3 @@ res.status(statusCode).json({
 }
 
 export{ notFound, errorHandler};
-
-// Middleware to validate presence of image object
-function validateImage(req, res, next) {
-    if (!req.body.image) {
-        return res.status(400).json({ error: 'Image object is required' });
-    }
-    next();
-}
